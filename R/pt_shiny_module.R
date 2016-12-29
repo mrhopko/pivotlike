@@ -8,6 +8,7 @@ library(miniUI)
 library(formattable)
 library(DT)
 library(shinyjs)
+library(shinyAce)
 
 source('R/pt_helper_functions.R')
 

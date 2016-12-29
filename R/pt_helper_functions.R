@@ -6,8 +6,8 @@
 #'@param pt_metrics character that is parsed in context of dt j 
 #'@param pt_sort character vecotr used to sort dt
 #'@param pt_sort_order 1 decreasing (default) or -1 increasing. can be vector.
-#'@param pt_subtotals to be implemented
-#'@param pt_grand_totals to be implemented
+#'@param pt_row_subtotals logical - should row subtotals be included?
+#'@param pt_col_subtotals logical - should column subtotals be included?
 #'@param pt_other to be implemented
 #'@export
 #'@import data.table
@@ -38,12 +38,32 @@ new_pt_options <- function(pt_filter = NA_character_,
   return(me)
 }
 
+#'pt_options hold options passed to pivot table functions
+#'
+#'@param x data.table containing data
+#'@param pt_options pt_options list
+#'@return data.table altered according to pt_options
+#'@export
 pt_calc <- function(x, pt_options) UseMethod("pt_calc")
 
+
+#'pt_options hold options passed to pivot table functions
+#'
+#'@param x data.table containing data
+#'@param pt_options pt_options list
+#'@return data.table altered according to pt_options
+#'@export
 pt_calc.default <- function(x, pt_options) {
   stop("x must be a data.table")
 }
 
+
+#'pt_options hold options passed to pivot table functions
+#'
+#'@param x data.table containing data
+#'@param pt_options pt_options list
+#'@return data.table altered according to pt_options
+#'@export
 pt_calc.data.table <- function(x, pt_options) {
   
   result <- filter_dt(x, pt_options)
@@ -61,6 +81,13 @@ pt_calc.data.table <- function(x, pt_options) {
   result
 }
 
+
+#'add subtotals to a dt using pt_options rows/cols/subtotals
+#'
+#'@param x data.table containing data
+#'@param pt_options pt_options list
+#'@return data.table containing subtotals based on row/cols in pt_options
+#'@export
 subtotal_dt <- function(x, pt_options) {
   
   if(is_empty_data(x)) return(x)
@@ -113,7 +140,12 @@ subtotal_dt <- function(x, pt_options) {
   
 }
 
-
+#'group a data.table according to rows/columns of pt_options
+#'
+#'@param x data.table containing data
+#'@param pt_options pt_options list
+#'@return data.table containing subtotals based on row/cols in pt_options
+#'@export
 group_row_col_dt <- function(x, pt_options) {
   
   if(is_null_empty_na_blank(pt_options)) return(x)
@@ -127,7 +159,13 @@ group_row_col_dt <- function(x, pt_options) {
   
 }
 
-
+#'group a data.table according to rows/columns of pt_options
+#'
+#'@param x data.table containing data
+#'@param pt_options pt_options list
+#'@param pt_group vector of field names of x to be used in by statement of data.table
+#'@return data.table containing grouped data
+#'@export
 group_dt <- function(x, pt_options, pt_group) {
   
   if(is_null_empty_na_blank(pt_group)) return(x)
@@ -162,7 +200,12 @@ group_dt <- function(x, pt_options, pt_group) {
   
 }
 
-
+#'pivot a data.table according to rows/columns of pt_options
+#'
+#'@param x data.table containing data
+#'@param pt_options pt_options list
+#'@return data.table containing pivoted data
+#'@export
 pivot_dt <- function(x, pt_options) {
   
   if(is_null_empty_na_blank(pt_options$pt_col)) return(x)
@@ -193,7 +236,12 @@ pivot_dt <- function(x, pt_options) {
   
 }
 
-
+#'group then pivot dt according to row/cols of pt_options
+#'
+#'@param x data.table containing data
+#'@param pt_options pt_options list
+#'@return data.table containing grouped/pivoted data
+#'@export
 group_pivot_dt <- function(x, pt_options) {
   
   result <- group_row_col_dt(x, pt_options)
@@ -204,6 +252,12 @@ group_pivot_dt <- function(x, pt_options) {
 }
 
 
+#'filter dt according filter in pt_options
+#'
+#'@param x data.table containing data
+#'@param pt_options pt_options list
+#'@return data.table containing grouped/pivoted data
+#'@export
 filter_dt <- function(x, pt_options) {
   
   if(is_null_empty_na_blank(pt_options$pt_filter)) return(x)
@@ -224,6 +278,12 @@ filter_dt <- function(x, pt_options) {
 }
     
 
+#'sort dt according sort in pt_options
+#'
+#'@param x data.table containing data
+#'@param pt_options pt_options list
+#'@return data.table containing grouped/pivoted data
+#'@export
 sort_dt <- function(x, pt_options) {
   
   if(is_null_empty_na_blank(pt_options$pt_sort)) return(x)
@@ -240,3 +300,14 @@ sort_dt <- function(x, pt_options) {
 }
 
 
+#'convert name and text to pt_metrics
+#'
+#'@param m_name character metric name(s)
+#'@param m_text character metric text
+#'@return character string to slot into pt_options$pt_metrics
+text_to_pt_metrics <- function(m_name, m_text) {
+  paste0(
+    "list(",
+    paste0(unlist(Map(function(x,y) paste0(x, "=", y), x = m_name, y = m_text)), collapse = ","),
+    ")")
+}

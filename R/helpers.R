@@ -11,3 +11,4 @@ is_empty_data <- function(x) {
   if(nrow(x) <= 0) return(TRUE)
   FALSE
 }
+

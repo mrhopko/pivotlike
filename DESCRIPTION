@@ -1,0 +1,23 @@
+Package: pivotlike
+Type: Package
+Title: A Pivot Like shiny gadget and module
+Version: 0.0.01
+Author: Christopher Hopkinson
+Maintainer: <therealchristopherhopkinson@hotmail.com>
+Description: A Pivot Like shiny gadget and module
+License: MIT
+LazyData: TRUE
+Imports:
+    data.table,
+    plyr,
+    dplyr,
+    DT,
+    dtplyr,
+    magrittr,
+    miniUI,
+    purrr,
+    rstudioapi,
+    shiny
+Suggests:
+    testthat
+RoxygenNote: 5.0.1
