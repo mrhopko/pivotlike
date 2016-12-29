@@ -1,9 +1,10 @@
-create_metricOutput <- function(id) {
+create_metricOutput <- function(id, col_names) {
   
   ns <- shiny::NS(id)
   
   return(
     shiny::modalDialog(
+      shinyDND::dragSetUI(id = ns("col_names"), textval = col_names, dragdata = col_names),
       shiny::textInput(ns("text_metric_name"), "Metric Name"),
       shinyAce::aceEditor(ns("ace_metric_code"), mode = "r"),
       size = "m",
