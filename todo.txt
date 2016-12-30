@@ -1,26 +1,23 @@
-ui elements to implement
-
-create metrics:
-metric name
-metric formula
-add - adds to list
-how to represent this?
-add metric, see metric
-metrics - select
-metrics - create
-when create then select
-
-
-drag and drop?
-fields to filter/group/row/col
-
-ui - subtotals - rows, cols, expand/contract rows see 
-http://orbjs.net/
-
-can this be done in DT?
-conditional formatting
-expand rows 
-
-button panel - small buttons
+show hide dt filter - done
+remove dt search - done
+dt button styles - done
+dt row banding - done
+pre-written metrics - sum, mean count - done
+multi column names on multi lines
+current options view - show/hide
+return current options
+gadget
+module
+number formatting - metric
+dt conditional formatting - meric
 
 
+test button - filter
+test button - metric
+validation on save - filter
+validation on save - metric
+subtotal ordering
+subtotal show hide
+subtotal formatting
+grand total footer
+charts

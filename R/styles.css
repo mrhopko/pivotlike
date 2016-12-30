@@ -29,6 +29,14 @@ height: auto;
   font-size: 2em;
 }
 
+a.dt-button {
+  color: #333333;
+  background-color: #ffffff;
+  background-image: none;
+  border-color: #cccccc;
+  border-radius: 4px;
+}
+
 hr {
   margin-top: 5px;
   margin-bottom: 5px;

@@ -38,7 +38,41 @@ new_pt_options <- function(pt_filter = NA_character_,
   return(me)
 }
 
-#'pt_options hold options passed to pivot table functions
+#'New pivot table format list that controls pt UI formatting
+#' 
+#'@param pt_class character passed to datatable class
+#'@parma pt_style character passed to datatable style
+#'@returns pt_format list
+#'@export
+new_pt_format <- function(pt_class = c("row-border","stripe"), pt_style = "default") {
+  
+  pt_class <- 
+    if(is_null_empty_na_blank(pt_class)) {
+      c("row-border", "stripe")
+    } else {
+      pt_class
+    }
+    
+  pt_style <- 
+    if(is_null_empty_na_blank(pt_style)) {
+      "default"
+    } else {
+      pt_style
+    }
+  
+  me <- list(pt_class = pt_class,
+             pt_style = pt_style)
+  
+  class(me) <- c(class(me), "pt_format")
+  
+  return(me)
+  
+}
+
+
+
+
+#'Calculate pivottable data given pt_options
 #'
 #'@param x data.table containing data
 #'@param pt_options pt_options list
@@ -47,7 +81,7 @@ new_pt_options <- function(pt_filter = NA_character_,
 pt_calc <- function(x, pt_options) UseMethod("pt_calc")
 
 
-#'pt_options hold options passed to pivot table functions
+#'Calculate pivottable data given pt_options
 #'
 #'@param x data.table containing data
 #'@param pt_options pt_options list
@@ -58,7 +92,7 @@ pt_calc.default <- function(x, pt_options) {
 }
 
 
-#'pt_options hold options passed to pivot table functions
+#'Calculate pivottable data given pt_options
 #'
 #'@param x data.table containing data
 #'@param pt_options pt_options list
@@ -69,13 +103,16 @@ pt_calc.data.table <- function(x, pt_options) {
   result <- filter_dt(x, pt_options)
   
   result <- sort_dt(result, pt_options)
-  
-  result_group <- group_row_col_dt(result, pt_options)
 
-  result_subtotal <- subtotal_dt(result, pt_options)
+  result_group <- group_row_col_dt(result, pt_options)
   
-  result <- rbind(result_group, result_subtotal, use.names = TRUE)
-  
+  if(pt_options$pt_row_subtotals | pt_options$pt_col_subtotals) {
+    result_subtotal <- subtotal_dt(result, pt_options)
+    result <- rbind(result_group, result_subtotal, use.names = TRUE)  
+  } else {
+    result <- result_group
+  }
+
   result <- pivot_dt(result, pt_options)
 
   result
@@ -310,4 +347,27 @@ text_to_pt_metrics <- function(m_name, m_text) {
     "list(",
     paste0(unlist(Map(function(x,y) paste0(x, "=", y), x = m_name, y = m_text)), collapse = ","),
     ")")
+}
+
+
+default_metrics <- function(col_names, col_types) {
+  
+  numeric_cols <- col_names[col_types %in% c("numeric", "integer")]
+  
+  sum_metrics <- 
+    list(m_name = paste0("sum_", numeric_cols),
+         m_text = paste0("sum(", numeric_cols, ", na.rm = TRUE)"))
+  
+  count_metrics <- 
+    list(m_name = paste0("count_", col_names),
+         m_text = rep(".N", length(col_names)))
+  
+  mean_metrics <- 
+    list(m_name = paste0("mean_", numeric_cols),
+         m_text = paste0("mean(", numeric_cols, ", na.rm = TRUE)"))
+  
+  list(
+    m_name = c(sum_metrics$m_name, count_metrics$m_name, mean_metrics$m_name),
+    m_text = c(sum_metrics$m_text, count_metrics$m_text, mean_metrics$m_text)
+  )
 }

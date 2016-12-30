@@ -45,4 +45,16 @@ test_that("pivot table calculations correct", {
   
   expect_equal(nrow(subtotal_g[,.N, by = col1]), 1)
   
+  pt_options <- new_pt_options(pt_row = "carb", 
+                               pt_col = "gear", 
+                               pt_metrics = "list(sum_mpg=sum(mpg, na.rm = TRUE))", 
+                               pt_filter = "")
+  
+  x <- as.data.table(mtcars)
+  pt <- pt_calc(x, pt_options)
+  
+  expect_equal(sum(pt$`3`, na.rm = TRUE), sum(x[gear == 3, mpg], na.rm = TRUE))
+  
+  
+  
 })
